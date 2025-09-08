@@ -1,0 +1,65 @@
+name: deploy-pages
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  pages: write      # requises pour déployer
+  id-token: write   # requises pour OIDC
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+env:
+  BASE_HREF: "/${{ github.event.repository.name }}/"  # ex: /test_jules/
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: planet-viewer/package-lock.json
+
+      - name: Install deps
+        working-directory: planet-viewer
+        run: npm ci --no-audit --no-fund
+
+      - name: Angular CLI
+        working-directory: planet-viewer
+        run: npx --yes -p @angular/cli@20 ng version
+
+      - name: Build Angular (sortie dans _site/)
+        working-directory: planet-viewer
+        run: |
+          npx --yes -p @angular/cli@20 ng build \
+            --configuration production \
+            --base-href "${BASE_HREF}" \
+            --output-path ../_site
+          touch ../_site/.nojekyll
+          echo "/*    /index.html   200" > ../_site/_redirects || true
+          ls -la ../_site
+
+      - name: Upload artifact to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
