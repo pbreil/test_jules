@@ -23,17 +23,12 @@ jobs:
   build:
     name: Build Angular
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: planet-viewer
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Debug repo layout (où est package.json ?)
-        run: |
-          echo "PWD=$(pwd)"
-          echo "--- ls -la (racine) ---"
-          ls -la
-          echo "--- package.json trouvés ---"
-          find . -maxdepth 3 -name package.json -not -path "*/node_modules/*" -print
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
