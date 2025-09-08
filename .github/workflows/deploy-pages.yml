@@ -1,65 +1,82 @@
-name: deploy-pages
+name: Build & Deploy Angular to GitHub Pages
+
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
 permissions:
-  pages: write      # requises pour déployer
-  id-token: write   # requises pour OIDC
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 env:
-  BASE_HREF: "/${{ github.event.repository.name }}/"  # ex: /test_jules/
+  PROJECT_NAME: planet-viewer
+  BASE_PATH: /test_jules/
+  NODE_VERSION: 20
 
 jobs:
   build:
+    name: Build Angular
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: planet-viewer/package-lock.json
 
-      - name: Install deps
-        working-directory: planet-viewer
-        run: npm ci --no-audit --no-fund
+      - name: Install dependencies (npm ci)
+        run: npm ci
 
-      - name: Angular CLI
-        working-directory: planet-viewer
-        run: npx --yes -p @angular/cli@20 ng version
-
-      - name: Build Angular (sortie dans _site/)
-        working-directory: planet-viewer
+      - name: Build Angular (${{ env.PROJECT_NAME }}) with base-href
         run: |
-          npx --yes -p @angular/cli@20 ng build \
+          npx ng version || npx -y @angular/cli@latest ng version
+          npx ng build ${{ env.PROJECT_NAME }} \
             --configuration production \
-            --base-href "${BASE_HREF}" \
-            --output-path ../_site
-          touch ../_site/.nojekyll
-          echo "/*    /index.html   200" > ../_site/_redirects || true
-          ls -la ../_site
+            --base-href ${{ env.BASE_PATH }} \
+            --deploy-url ${{ env.BASE_PATH }}
 
-      - name: Upload artifact to Pages
+      - name: Resolve build output folder
+        id: resolve
+        shell: bash
+        run: |
+          if [ -d "dist/${{ env.PROJECT_NAME }}/browser" ]; then
+            echo "out=dist/${{ env.PROJECT_NAME }}/browser" >> "$GITHUB_OUTPUT"
+          elif [ -d "dist/${{ env.PROJECT_NAME }}" ]; then
+            echo "out=dist/${{ env.PROJECT_NAME }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "Build output not found under dist/. Contents:" >&2
+            ls -R dist || true
+            exit 1
+          fi
+          echo "Using output: ${{ steps.resolve.outputs.out }}"
+
+      - name: List build artifacts (debug)
+        run: |
+          echo "Resolved folder: ${{ steps.resolve.outputs.out }}"
+          ls -lah "${{ steps.resolve.outputs.out }}"
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: ${{ steps.resolve.outputs.out }}
 
   deploy:
-    needs: build
+    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: Deploy
+        id: deploy
         uses: actions/deploy-pages@v4
