@@ -66,15 +66,10 @@ jobs:
           fi
           echo "Using output: ${{ steps.resolve.outputs.out }}"
 
-      - name: List build artifacts (debug)
-        run: |
-          echo "Resolved folder: ${{ steps.resolve.outputs.out }}"
-          ls -lah "${{ steps.resolve.outputs.out }}"
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ steps.resolve.outputs.out }}
+          path: planet-viewer/${{ steps.resolve.outputs.out }}
 
   deploy:
     name: Deploy to GitHub Pages
@@ -84,6 +79,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
