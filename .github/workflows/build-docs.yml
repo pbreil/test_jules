@@ -34,12 +34,15 @@ jobs:
       - name: Build for Pages into docs/
         working-directory: ./planet-viewer
         run: |
-          npx --yes -p @angular/cli@20 ng build --configuration production --output-path ../docs --base-href "/planet-viewer/"
+          npx --yes -p @angular/cli@20 ng build --configuration production --output-path ../docs --base-href "/test_jules/"
 
       - name: Create .nojekyll (empêche GitHub Pages d’ignorer assets)
         run: |
           touch docs/.nojekyll
           echo "/*    /index.html   200" > docs/_redirects || true
+
+      - name: SPA fallback (copie 404.html)
+        run: cp docs/index.html docs/404.html    
 
       - name: Commit docs back to main
         uses: stefanzweifel/git-auto-commit-action@v5
