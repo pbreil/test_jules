@@ -47,7 +47,7 @@ jobs:
 
       - name: Build Angular into docs/
         working-directory: ./planet-viewer
-        run: npx --yes -p @angular/cli@20 ng build -c production -o ../docs --base-href "/test_jules/"    
+        run: npx --yes -p @angular/cli@20 ng build --configuration production --output-path ../docs --base-href "/test_jules/"    
 
       - name: SPA fallback (copie 404.html)
         run: cp docs/index.html docs/404.html    
