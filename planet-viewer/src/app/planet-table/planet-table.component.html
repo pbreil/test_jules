@@ -1,15 +1,15 @@
 <p-table #dt [value]="planets" sortMode="multiple">
     <ng-template pTemplate="caption">
         <div class="flex justify-content-end">
-            <button pButton type="button" label="Download CSV" (click)="dt.exportCSV()"></button>
+            <button pButton type="button" (click)="dt.exportCSV()" i18n>Download CSV</button>
         </div>
     </ng-template>
     <ng-template pTemplate="header">
         <tr>
-            <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
-            <th pSortableColumn="diameter">Diameter <p-sortIcon field="diameter"></p-sortIcon></th>
-            <th pSortableColumn="distanceFromSun">Distance from Sun <p-sortIcon field="distanceFromSun"></p-sortIcon></th>
-            <th pSortableColumn="numberOfMoons">Number of Moons <p-sortIcon field="numberOfMoons"></p-sortIcon></th>
+            <th pSortableColumn="name" i18n>Name <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="diameter" i18n>Diameter <p-sortIcon field="diameter"></p-sortIcon></th>
+            <th pSortableColumn="distanceFromSun" i18n>Distance from Sun <p-sortIcon field="distanceFromSun"></p-sortIcon></th>
+            <th pSortableColumn="numberOfMoons" i18n>Number of Moons <p-sortIcon field="numberOfMoons"></p-sortIcon></th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-planet>
