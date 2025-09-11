@@ -34,13 +34,22 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "fr": "src/locale/messages.fr.xlf",
+          "es": "src/locale/messages.es.xlf"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "outputPath": "dist/planet-viewer/en",
             "browser": "src/main.ts",
             "polyfills": [
-              "zone.js"
+              "zone.js",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -51,7 +60,8 @@
             ],
             "styles": [
               "src/styles.css"
-            ]
+            ],
+            "localize": true
           },
           "configurations": {
             "production": {
@@ -73,6 +83,14 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "fr": {
+              "localize": ["fr"],
+              "outputPath": "dist/planet-viewer/fr"
+            },
+            "es": {
+              "localize": ["es"],
+              "outputPath": "dist/planet-viewer/es"
             }
           },
           "defaultConfiguration": "production"
@@ -85,19 +103,31 @@
             },
             "development": {
               "buildTarget": "planet-viewer:build:development"
+            },
+            "fr": {
+              "buildTarget": "planet-viewer:build:development,fr"
+            },
+            "es": {
+              "buildTarget": "planet-viewer:build:development,es"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular/build:extract-i18n"
+          "builder": "@angular/build:extract-i18n",
+          "options": {
+            "format": "xlf",
+            "outFile": "messages.xlf",
+            "outputPath": "src/locale"
+          }
         },
         "test": {
           "builder": "@angular/build:karma",
           "options": {
             "polyfills": [
               "zone.js",
-              "zone.js/testing"
+              "zone.js/testing",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
