@@ -1,0 +1,20 @@
+<div *ngIf="planet">
+  <div class="flex justify-content-end mb-4">
+    <button pButton type="button" label="Back to list" (click)="goBack()"></button>
+  </div>
+  <h2 class="text-2xl font-bold mb-4">{{planet.name}}</h2>
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <p class="font-bold">Diameter:</p>
+      <p>{{planet.diameter}}</p>
+    </div>
+    <div>
+      <p class="font-bold">Distance from Sun:</p>
+      <p>{{planet.distanceFromSun}}</p>
+    </div>
+    <div>
+      <p class="font-bold">Number of Moons:</p>
+      <p>{{planet.numberOfMoons}}</p>
+    </div>
+  </div>
+</div>

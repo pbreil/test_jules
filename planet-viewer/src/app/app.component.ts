@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
-import { PlanetTableComponent } from './planet-table/planet-table.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [PlanetTableComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'planet-viewer';
 }
