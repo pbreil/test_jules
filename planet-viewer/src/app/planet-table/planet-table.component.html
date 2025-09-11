@@ -13,7 +13,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-planet>
-        <tr>
+        <tr (click)="goToPlanetDetails(planet.id)" style="cursor: pointer">
             <td>{{planet.name}}</td>
             <td>{{planet.diameter}}</td>
             <td>{{planet.distanceFromSun}}</td>
