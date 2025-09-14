@@ -34,6 +34,11 @@ jobs:
         run: |
           npx --yes -p @angular/cli@20 ng build --configuration production --output-path ../docs --base-href "/test_jules/"
 
+      - name: Move files to root of docs
+        run: |
+          mv docs/browser/en-US/* docs/
+          rm -rf docs/browser
+
       - name: Create .nojekyll (empêche GitHub Pages d’ignorer assets)
         run: |
           touch docs/.nojekyll
