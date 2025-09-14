@@ -38,6 +38,7 @@ jobs:
         run: |
           mv docs/browser/en-US/* docs/
           rm -rf docs/browser
+          sed -i 's|<base href="/test_jules/en-US/">|<base href="/test_jules/">|' docs/index.html
 
       - name: Create .nojekyll (empêche GitHub Pages d’ignorer assets)
         run: |
